@@ -13,9 +13,9 @@ def positions(a1, a2, a3): #a1=angle1 and so on
         input3 = float(a3)
         cooridnates = {} #it has key that is a symbol of a point and its value is stored as list: [x,y]
         cooridnates['A'] = [0, oa]
-        cooridnates['B'] = [m.sin(m.radians(input1)), m.cos(m.radians(input1))]
-        cooridnates['C'] = [m.sin(m.radians(input1-input2)), m.cos(m.radians(input1-input2))]
-        cooridnates['D'] = [m.sin(m.radians(input1-input2+input3)), m.cos(m.radians(input1-input2+input3))]
+        cooridnates['B'] = [round(m.sin(m.radians(input1)), 3), round(m.cos(m.radians(input1)), 3)]
+        cooridnates['C'] = [round(m.sin(m.radians(input1-input2)), 3), round(m.cos(m.radians(input1-input2)), 3)]
+        cooridnates['D'] = [round(m.sin(m.radians(input1-input2+input3)), 3), round(m.cos(m.radians(input1-input2+input3)), 3)]
         return cooridnates
     except ValueError:
         return 'error'
