@@ -26,7 +26,7 @@ entry_angle3 = tk.Entry(top, width=10)
 entry_angle3.grid(column=1, row=2)
 
 label_results = tk.Label(top, text='', font = 'Arial', justify='left')
-label_results.grid()
+label_results.grid(columnspan=2)
 
 # image = tk.Canvas(top, width=300, height=300)
 # image.grid(column=2, row=0, columnspan=5, rowspan=30)
