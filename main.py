@@ -2,42 +2,48 @@ import tkinter as tk
 from tkinter import messagebox as tkmb
 import on_click as oc
 
-top = tk.Tk()
+class el_block:
+    def __init__(self, window, name, i):
+        self.label = tk.Label(window, text=name, font='Arial')
+        self.label.grid(row=i)
+        self.entry = tk.Entry(window, width=10)
+        self.entry.grid(column=1, row=i)
 
+    def get_value(self):
+        return self.entry.get()
+
+
+
+#if __name__ == '__main__':
+top = tk.Tk()
 top.title('Gloryfikowany kalkulator')
 top.resizable(0,0)
 
-label_angle1 = tk.Label(top, text='Kąt 1:', font = 'Arial')
-label_angle1.grid()
+# Angles
+angle =[]
+for i in range(0, 3):
+    angle.append(el_block(top, 'Kąt {}:'.format(str(i+1)), i))
 
-label_angle2 = tk.Label(top, text='Kąt 2:', font = 'Arial')
-label_angle2.grid(row=1)
+#Lenghts
+length =[]
+for i in range(0, 4):
+    length.append(el_block(top, 'Długość {}. odcinka:'.format(str(i+1)), i+4))
 
-label_angle3 = tk.Label(top, text='Kąt 3:', font = 'Arial')
-label_angle3.grid(row=2)
+#Angular speeds
+omega =[]
+for i in range(0, 3):
+    omega.append(el_block(top, 'Omega {}:'.format(str(i+1)), i+8))
 
-entry_angle1 = tk.Entry(top, width=10)
-entry_angle1.grid(column=1, row=0)
-
-entry_angle2 = tk.Entry(top, width=10)
-entry_angle2.grid(column=1, row=1)
-
-entry_angle3 = tk.Entry(top, width=10)
-entry_angle3.grid(column=1, row=2)
+#Angular acceleration
+epsilon =[]
+for i in range(0, 3):
+    epsilon.append(el_block(top, 'Epsilon {}:'.format(str(i+1)), i+11))
 
 label_results = tk.Label(top, text='', font = 'Arial', justify='left')
-label_results.grid(columnspan=2)
+label_results.grid(columnspan=3)
 
-# image = tk.Canvas(top, width=300, height=300)
-# image.grid(column=2, row=0, columnspan=5, rowspan=30)
-# #Cartesian cooridnates
-# image.create_line(0, 290, 300, 290, fill='#000000') #x axis
-# image.create_line(20, 0, 20, 300, fill='#000000') #y axs
-# #Scheme of the robot
-# image.create_line(20, 300, 20, 150, fill='#FF0000') #OA
-# image.create_line(20, 150, 200, 120, fill='#FF0000') #AB
-
-a_button = tk.Button(text='Oblicz', font='arial', command=lambda: oc.positions(entry_angle1.get(), entry_angle2.get(), entry_angle3.get(), label_results))
+a_button = tk.Button(text='Oblicz', font='arial', command=lambda: oc.calculate(angle, label_results))
 a_button.grid(column=6, sticky='se')
+
 
 top.mainloop()
