@@ -42,7 +42,7 @@ for i in range(0, 3):
 label_results = tk.Label(top, text='', font = 'Arial', justify='left')
 label_results.grid(columnspan=3)
 
-a_button = tk.Button(text='Oblicz', font='arial', command=lambda: oc.calculate(angle, label_results))
+a_button = tk.Button(text='Oblicz', font='arial', command=lambda: oc.calculate(angle, length, omega, epsilon, label_results))
 a_button.grid(column=6, sticky='se')
 
 
