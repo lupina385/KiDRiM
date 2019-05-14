@@ -1,5 +1,16 @@
-#import numpy as np
+import numpy as np
 import math as m
+
+# def rot(alfa, teta):
+#     """This function returns a 3x3 rotation matrix from Denavit-Hattenberg notation"""
+#     rotz = np.matrix([ [round(m.cos(m.radians(teta)), 3), round(-m.sin(m.radians(teta)), 3), 0],
+#                        [round(m.sin(m.radians(teta)), 3), round(m.cos(m.radians(teta)), 3), 0],
+#                        [0, 0, 1] ])
+#
+#     rotx = np.matrix([ [1, 0, 0],
+#                        [0, round(m.cos(m.radians(alfa)), 3), round(-m.sin(m.radians(alfa)), 3)],
+#                        [0, round(m.sin(m.radians(alfa)), 3), round(m.cos(m.radians(alfa)), 3)] ])
+#     return rotx*rotz
 
 def positions(angles, lengths): #a1=angle1 and so on
     """This function calculates positions of each points of a robot, based on given angles and lengths"""
@@ -21,6 +32,48 @@ def positions(angles, lengths): #a1=angle1 and so on
         coordinates['C'] = [-round(-coordinates['B'][0]+m.sin(m.radians(a[0]+a[1]))*l[2], 3), round(coordinates['B'][1]+m.cos(m.radians(a[0]+a[1]))*l[2], 3)]
         coordinates['D'] = [-round(-coordinates['C'][0]+m.sin(m.radians(sum(a)))*l[3], 3), round(coordinates['C'][1]+m.cos(m.radians(sum(a)))*l[3], 3)]
         return coordinates
-        
+
+    except ValueError:
+        return 'error'
+
+def rotations(angles):
+    """This function returns a rotations matricies from Denavit-Hattenberg notation based on given angles"""
+    try:
+        a=[]
+        for angle in angles:
+            a.append(float(angle.get_value()))
+
+        if a[0]<-60 or a[0]>60 or a[1]<-30 or a[1]>45 or a[2]<-45 or a[2]>30:
+            return 'error'
+        alfa, teta = [], []
+        for i in range(0, 7): #alfa angles
+            if i==1 or i==4:
+                alfa.append(m.radians(-90))
+            elif i==5:
+                alfa.append(m.radians(90))
+            else:
+                alfa.append(0)
+
+        teta.append(0)                  #teta0
+        teta.append(m.radians(a[0]-90)) #teta1
+        teta.append(m.radians(a[1]))    #teta2
+        teta.append(m.radians(-90))     #teta3
+        teta.append(0)                  #teta4
+        teta.append(m.radians(a[2]+90)) #teta5
+        teta.append(0)                  #teta6
+
+        R = []
+        for a, t in zip(alfa, teta):
+            rotz = np.matrix([ [round(m.cos(t), 3), round(-m.sin(t), 3), 0],
+                               [round(m.sin(t), 3), round(m.cos(t), 3), 0],
+                               [0, 0, 1] ])
+
+            rotx = np.matrix([ [1, 0, 0],
+                               [0, round(m.cos(a), 3), round(-m.sin(a), 3)],
+                               [0, round(m.sin(a), 3), round(m.cos(a), 3)] ])
+
+            R.append(rotx*rotz)
+        return R
+
     except ValueError:
         return 'error'
