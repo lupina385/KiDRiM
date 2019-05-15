@@ -41,7 +41,10 @@ def rotations(angles):
     try:
         a=[]
         for angle in angles:
-            a.append(float(angle.get_value()))
+            if __name__ == '__main__':
+                a.append(float(angle))
+            else:
+                a.append(float(angle.get_value()))
 
         if a[0]<-60 or a[0]>60 or a[1]<-30 or a[1]>45 or a[2]<-45 or a[2]>30:
             return 'error'
@@ -72,8 +75,55 @@ def rotations(angles):
                                [0, round(m.cos(a), 3), round(-m.sin(a), 3)],
                                [0, round(m.sin(a), 3), round(m.cos(a), 3)] ])
 
-            R.append(rotx*rotz)
+            R.append((rotx*rotz).transpose())
         return R
 
     except ValueError:
         return 'error'
+
+def omega_matrix(R, omegas):
+    """This function returns a list of matricies of angle velocities"""
+    try:
+        o=[]
+        o.append(0)
+        for om in omegas:
+            if __name__ == '__main__':
+                o.append(float(om))
+            else:
+                o.append(float(om.get_value()))
+
+        omega = []
+        omega.append(np.matrix([ [0],
+                                 [0],
+                                 [0] ]))       #omega0
+        Z = np.matrix([[0],
+                       [0],
+                       [1] ])
+
+
+        omega.append((R[0]*omega[0]))           #omega1
+        omega.append((R[1]*omega[1]) + (o[1]*Z))#omega2
+        omega.append((R[2]*omega[2]) + (o[2]*Z))#omega3
+        omega.append((R[3]*omega[3]))           #omega4
+        omega.append((R[4]*omega[4]))           #omega5
+        omega.append((R[5]*omega[5]) + (o[3]*Z))#omega6
+        omega.append((R[6]*omega[6]))           #omega7
+
+
+        return omega
+
+    except ValueError:
+        return 'error'
+
+if __name__ == '__main__':
+    angle = [30, 30, -30]
+    omega = [2, -3, 1]
+    R = rotations(angle)
+    o = omega_matrix(R, omega)
+    for i in range(0, 8):
+        if i>=1:
+            print('Rot:')
+            print(R[i-1])
+        print('omega')
+        print(o[i])
+        print('++++++++++++++++++++++')
