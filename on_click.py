@@ -17,13 +17,15 @@ def calculate(angle, length, omega, epsilon, label):
         cords = calc.positions(angle, length)
         result += 'Współrzędne członów:\nA( {} ; {} )\nB( {} ; {} )\nC( {} ; {} )\nD( {} ; {} )'.format(cords['A'][0], cords['A'][1], cords['B'][0], cords['B'][1], cords['C'][0], cords['C'][1], cords['D'][0], cords['D'][1])
 
-    if calc.rotations(angle) == 'error':
-        tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta!')
+    if calc.velocities(angle, length, omega) == 'error':
+        tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości bądź prędkości kątowej!')
         return 0
     else:
-        R = []
-        R = calc.rotations(angle)
-        for matrix in R:
-             result += '\n{}'.format(matrix)
+        v = calc.velocities(angle, length, omega)
+        result += '\nPrędkości: '
+        i=0
+        for vel in v:
+            result += '\nV' + str(i) + ': {}'.format(vel)
+            i+=1
 
     label.config(text=result)

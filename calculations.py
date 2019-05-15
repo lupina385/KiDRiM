@@ -1,17 +1,6 @@
 import numpy as np
 import math as m
 
-# def rot(alfa, teta):
-#     """This function returns a 3x3 rotation matrix from Denavit-Hattenberg notation"""
-#     rotz = np.matrix([ [round(m.cos(m.radians(teta)), 3), round(-m.sin(m.radians(teta)), 3), 0],
-#                        [round(m.sin(m.radians(teta)), 3), round(m.cos(m.radians(teta)), 3), 0],
-#                        [0, 0, 1] ])
-#
-#     rotx = np.matrix([ [1, 0, 0],
-#                        [0, round(m.cos(m.radians(alfa)), 3), round(-m.sin(m.radians(alfa)), 3)],
-#                        [0, round(m.sin(m.radians(alfa)), 3), round(m.cos(m.radians(alfa)), 3)] ])
-#     return rotx*rotz
-
 def positions(angles, lengths): #a1=angle1 and so on
     """This function calculates positions of each points of a robot, based on given angles and lengths"""
     try:
@@ -100,7 +89,6 @@ def omega_matrix(R, omegas):
                        [0],
                        [1] ])
 
-
         omega.append((R[0]*omega[0]))           #omega1
         omega.append((R[1]*omega[1]) + (o[1]*Z))#omega2
         omega.append((R[2]*omega[2]) + (o[2]*Z))#omega3
@@ -109,11 +97,70 @@ def omega_matrix(R, omegas):
         omega.append((R[5]*omega[5]) + (o[3]*Z))#omega6
         omega.append((R[6]*omega[6]))           #omega7
 
-
         return omega
 
     except ValueError:
+        return 'error-'
+
+def shift(lengths):
+
+    try:
+        l = []
+        for length in lengths:
+            l.append(float(length.get_value()))
+        P = []
+        P.append(np.matrix([[0],
+                            [0],
+                            [l[0]] ]))
+        P.append(np.matrix([[0],
+                            [0],
+                            [0] ]))
+        P.append(np.matrix([[l[1]],
+                            [0],
+                            [0] ]))
+        P.append(np.matrix([[l[2]*(2.0/3.0)],
+                            [0],
+                            [0] ]))
+        P.append(np.matrix([[0],
+                            [l[2]/3.0],
+                            [0] ]))
+        P.append(np.matrix([[0],
+                            [0],
+                            [0] ]))
+        P.append(np.matrix([[l[3]],
+                            [0],
+                            [0] ]))
+        return P
+    except ValueError:
         return 'error'
+
+def velocities(angles, lengths, omega):
+    R = rotations(angles)
+    o = omega_matrix(R, omega)
+    P = shift(lengths)
+    if R == 'error' or o == 'error' or P == 'error':
+        return 'error'
+    P_fixed = []
+    o_fixed = []
+    for matrix in P:
+        P_fixed.append(matrix.reshape(1, 3))
+    for matrix in o:
+        o_fixed.append(matrix.reshape(1, 3))
+
+    Z = np.matrix([[0],
+                   [0],
+                   [1] ])
+    v=[]
+    v.append(np.matrix([[0],
+                        [0],
+                        [0] ]))
+    for i in range(1, 8):
+        if i == 5:
+            v.append(np.round(R[i-1] * (v[i-1] + np.cross(o_fixed[i-1], P_fixed[i-1]).reshape(3, 1)) + 0.02*Z, 3))
+        else:
+            v.append(np.round(R[i-1] * (v[i-1] + np.cross(o_fixed[i-1], P_fixed[i-1]).reshape(3,1)), 3))
+    return v
+
 
 if __name__ == '__main__':
     angle = [30, 30, -30]
