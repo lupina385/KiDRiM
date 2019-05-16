@@ -14,7 +14,7 @@ class el_block:
 
 top = tk.Tk()
 top.title('Gloryfikowany kalkulator')
-top.resizable(0,0)
+top.resizable(0, 0)
 
 # Angles
 angle =[]
@@ -36,11 +36,16 @@ epsilon =[]
 for i in range(0, 3):
     epsilon.append(el_block(top, 'Epsilon {}:'.format(str(i+1)), i+11))
 
-label_results = tk.Label(top, text='', font = 'Arial', justify='left')
-label_results.grid(columnspan=3)
+label_result = []
+label_result.append(tk.Label(top, text='', font = 'Arial', justify='left')) #positions
+label_result[0].grid(column=2, row=0, rowspan=999, sticky='nw')
+label_result.append(tk.Label(top, text='', font = 'Arial', justify='left')) #velocities
+label_result[1].grid(column=3, row=0, rowspan=999, sticky='nw')
+label_result.append(tk.Label(top, text='', font = 'Arial', justify='left')) #accelerations
+label_result[2].grid(column=4, row=0, rowspan=999, sticky='nw')
 
-a_button = tk.Button(text='Oblicz', font='arial', command=lambda: oc.calculate(angle, length, omega, epsilon, label_results))
-a_button.grid(column=6, sticky='se')
+a_button = tk.Button(text='Oblicz', font='arial', command=lambda: oc.calculate(angle, length, omega, epsilon, label_result))
+a_button.grid(column=10, sticky='se')
 
 
 top.mainloop()
