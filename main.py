@@ -12,9 +12,6 @@ class el_block:
     def get_value(self):
         return self.entry.get()
 
-
-
-#if __name__ == '__main__':
 top = tk.Tk()
 top.title('Gloryfikowany kalkulator')
 top.resizable(0,0)
