@@ -2,16 +2,20 @@ import numpy as np
 import math as m
 
 if __name__ == '__main__':
-    angles, lengths, omega, epsilon = 0, 0, 0, 0
+    angles, lengths, omega, epsilon, sav2 = 0, 0, 0, 0, 0
 
-def shifts(lengths):
+def shifts(lengths, sav2):
     try:
         if __name__ == '__main__':
             l = [0.3, 0.2, 0.15, 0.15]
+            sav2 = [0.05, 0.02, 0.02]
         else:
             l = []
             for length in lengths:
                 l.append(float(length.get_value()))
+            sav = []
+            for i in sav2:
+                sav.append(float(i.get_value()))
         P = []
         P.append(np.matrix([[0],
                             [0],
@@ -22,11 +26,11 @@ def shifts(lengths):
         P.append(np.matrix([[l[1]],
                             [0.0],
                             [0.0] ]))
-        P.append(np.matrix([[l[2]*(2.0/3.0)],
+        P.append(np.matrix([[l[2]-sav[0]],
                             [0],
                             [0] ]))
         P.append(np.matrix([[0],
-                            [l[2]/3.0],
+                            [sav[0]],
                             [0] ]))
         P.append(np.matrix([[0.0],
                             [0.0],
@@ -182,7 +186,7 @@ def positions(angles, lengths):
     except ValueError:
         return 'error'
 
-def velocities(angles, lengths, omega):
+def velocities(angles, lengths, omega, sav2):
     d4 = 0.02
     if __name__ == '__main__':
         a = [30.0, 30.0, -30.0]
@@ -194,7 +198,7 @@ def velocities(angles, lengths, omega):
     else:
         R = rotations(angles)
         o = omega_matrix(R, omega)
-        P = shifts(lengths)
+        P = shifts(lengths, sav2)
     if R == 'error' or o == 'error' or P == 'error':
         return 'error'
     P_fixed = []
@@ -218,13 +222,13 @@ def velocities(angles, lengths, omega):
             v.append(np.round(R[i-1] * (v[i-1] + np.cross(o_fixed[i-1], P_fixed[i-1]).reshape(3,1)), 3))
     return v
 
-def accelerations(angles, lengths, omega, epsilon):
+def accelerations(angles, lengths, omega, epsilon, sav2):
     d4 = 0.02
     e4 = 0.02
     R = rotations(angles)
     o = omega_matrix(R, omega)
     e = epsilon_matrix(R, o, epsilon, omega)
-    P = shifts(lengths)
+    P = shifts(lengths, sav2)
     a = []
     a.append(np.matrix([ [0.0],
                          [0.0],
