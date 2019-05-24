@@ -8,7 +8,7 @@ def shifts(lengths, sav2):
     try:
         if __name__ == '__main__':
             l = [0.3, 0.2, 0.15, 0.15]
-            sav2 = [0.05, 0.02, 0.02]
+            sav = [0.05, 0.02, 0.02]
         else:
             l = []
             for length in lengths:
@@ -19,25 +19,25 @@ def shifts(lengths, sav2):
         P = []
         P.append(np.matrix([[0],
                             [0],
-                            [l[0]] ]))
+                            [l[0]] ])) # O to A [0]
         P.append(np.matrix([[0.0],
                             [0.0],
                             [0.0] ]))
         P.append(np.matrix([[l[1]],
                             [0.0],
-                            [0.0] ]))
+                            [0.0] ])) # A to B [2]
         P.append(np.matrix([[l[2]-sav[0]],
                             [0],
-                            [0] ]))
+                            [0] ]))   # B to S [3]
         P.append(np.matrix([[0],
                             [sav[0]],
-                            [0] ]))
+                            [0] ]))  # S to C [4]
         P.append(np.matrix([[0.0],
                             [0.0],
                             [0.0] ]))
         P.append(np.matrix([[l[3]],
                             [0],
-                            [0] ]))
+                            [0] ])) # C to D [6]
         return P
 
     except ValueError:
@@ -158,6 +158,43 @@ def epsilon_matrix(R, o_m, epsilons, o_v):
     except ValueError:
         return 'error'
 
+def tensors_of_inertia(lengths, sav2):
+    try:
+        if __name__ == '__main__':
+            l = [0.3, 0.2, 0.15, 0.15]
+            sav = [0.05, 0.02, 0.02]
+        else:
+            l = []
+            for length in lengths:
+                l.append(float(length.get_value()))
+            sav = []
+            for i in sav2:
+                sav.append(float(i.get_value()))
+        I = []
+        I.append(np.matrix([ [m.pow(l[0], 3)/12, 0, 0],
+                             [0, m.pow(l[0], 3)/12, 0],
+                             [0, 0, 0] ]))
+        I.append(np.matrix([ [0, 0, 0],
+                             [0, m.pow(l[1], 3)/12, 0],
+                             [0, 0, m.pow(l[1], 3)/12] ]))
+        I.append(np.matrix([ [0, 0, 0],
+                             [0, m.pow(l[2]-sav[0], 3)/12, 0],
+                             [0, 0, m.pow(l[2]-sav[0], 3)/12] ]))
+        I.append(np.matrix([ [0, 0, 0],
+                             [0, m.pow(sav[0], 3)/12, 0],
+                             [0, 0, m.pow(sav[0], 3)/12] ]))
+        I.append(np.matrix([ [0, 0, 0],
+                             [0, m.pow(l[3], 3)/12, 0],
+                             [0, 0, m.pow(l[3], 3)/12] ]))
+
+        return I
+    except ValueError:
+        return 'error'
+
+#Functions above are only for functions below to be able to calculate certain values
+#They are not for displaying any informations for user
+#Everything below is later outputted onto the screen
+
 def positions(angles, lengths):
     """This function calculates positions of each points of a robot, based on given angles and lengths"""
     try:
@@ -187,7 +224,7 @@ def positions(angles, lengths):
         return 'error'
 
 def velocities(angles, lengths, omega, sav2):
-    d4 = 0.02
+    """This functions calculates vectors of velocities of the points of the robot"""
     if __name__ == '__main__':
         a = [30.0, 30.0, -30.0]
         o = [0.0, 2.0, -3.0, 1.0]
@@ -195,10 +232,12 @@ def velocities(angles, lengths, omega, sav2):
         R = rotations(a)
         o = omega_matrix(R, o)
         P = shifts(l)
+        v2=0.02
     else:
         R = rotations(angles)
         o = omega_matrix(R, omega)
         P = shifts(lengths, sav2)
+        v2 = float(sav2[1].get_value())
     if R == 'error' or o == 'error' or P == 'error':
         return 'error'
     P_fixed = []
@@ -217,18 +256,26 @@ def velocities(angles, lengths, omega, sav2):
                         [0.0] ]))
     for i in range(1, 8):
         if i == 5:
-            v.append(np.round(R[i-1] * (v[i-1] + np.cross(o_fixed[i-1], P_fixed[i-1]).reshape(3, 1)) + d4*Z, 3))
+            v.append(np.round(R[i-1] * (v[i-1] + np.cross(o_fixed[i-1], P_fixed[i-1]).reshape(3, 1)) + v2*Z, 3))
         else:
             v.append(np.round(R[i-1] * (v[i-1] + np.cross(o_fixed[i-1], P_fixed[i-1]).reshape(3,1)), 3))
     return v
 
 def accelerations(angles, lengths, omega, epsilon, sav2):
-    d4 = 0.02
-    e4 = 0.02
+    """This functions calculates vectors of accelerations of the points of the robot"""
     R = rotations(angles)
     o = omega_matrix(R, omega)
     e = epsilon_matrix(R, o, epsilon, omega)
     P = shifts(lengths, sav2)
+    if __name__=='__main__':
+        v2=0.02
+        a2=0.02
+    else:
+        try:
+            v2 = float(sav2[1].get_value())
+            a2 = float(sav2[0].get_value())
+        except ValueError:
+            return 'error'
     a = []
     a.append(np.matrix([ [0.0],
                          [0.0],
@@ -239,25 +286,91 @@ def accelerations(angles, lengths, omega, epsilon, sav2):
     o_fixed = []
     P_fixed = []
     e_fixed = []
-    d4_Z_fixed = (d4*Z).reshape(1, 3)
+    v2_Z_fixed = (v2*Z).reshape(1, 3)
     for omega in o:
         o_fixed.append(omega.reshape(1, 3))
     for shift in P:
         P_fixed.append(shift.reshape(1, 3))
     for epsilon in e:
         e_fixed.append(epsilon.reshape(1, 3))
-
     for i in range(1, 8):
         if i == 5:
             a.append(np.round(R[i-1]*(a[i-1] + np.cross(o_fixed[i-1], np.cross(o_fixed[i-1], P_fixed[i-1])).reshape(3, 1) + np.cross(e_fixed[i-1], P_fixed[i-1]).reshape(3, 1))
-                    + (np.cross(2*o_fixed[i-1], d4_Z_fixed).reshape(3, 1) + e4*Z), 3))
+                    + (np.cross(2*o_fixed[i-1], v2_Z_fixed).reshape(3, 1) + a2*Z), 3))
         else:
             a.append(np.round(R[i-1] * (a[i-1] + np.cross(o_fixed[i-1], np.cross(o_fixed[i-1], P_fixed[i-1])).reshape(3, 1) + np.cross(e_fixed[i-1], P_fixed[i-1]).reshape(3, 1)), 3))
-
-
     return a
 
+def accelerations_centre_mass(angles, lengths, omega, epsilon, sav2):
+    """This functions calculates vectors of accelerations of the centre of masses of arms of the robot"""
+    #^I do not speak london very much
+    R = rotations(angles)
+    P = shifts(lengths, sav2)
+    o = omega_matrix(R, omega)
+    e = epsilon_matrix(R, o, epsilon, omega)
+    a = accelerations(angles, lengths, omega, epsilon, sav2)
+    o_fixed = []
+    P_fixed = []
+    e_fixed = []
+    for omega in o:
+        o_fixed.append(omega.reshape(1, 3))
+    for shift in P:
+        P_fixed.append(shift.reshape(1, 3))
+    for epsilon in e:
+        e_fixed.append(epsilon.reshape(1, 3))
+    acm = []
+    acm.append(np.round(a[0] + np.cross(o_fixed[0], np.cross(o_fixed[0], 0.5*P_fixed[0])).reshape(3, 1) + np.cross(e_fixed[0], 0.5*P_fixed[0]).reshape(3, 1), 3))        #a01
+    acm.append(np.round(a[2] + np.cross(o_fixed[2], np.cross(o_fixed[2], 0.5*P_fixed[2])).reshape(3, 1) + np.cross(e_fixed[2], 0.5*P_fixed[2]).reshape(3, 1), 3))        #a23
+    acm.append(np.round(a[3] + np.cross(o_fixed[3], np.cross(o_fixed[3], 0.5*P_fixed[3])).reshape(3, 1) + np.cross(e_fixed[3], 0.5*P_fixed[3]).reshape(3, 1), 3))        #a34
+    acm.append(np.round((R[4]*(a[4] + np.cross(o_fixed[4], np.cross(o_fixed[4], 0.5*P_fixed[4])).reshape(3, 1) + np.cross(e_fixed[4], 0.5*P_fixed[4]).reshape(3, 1))), 3)) #a45
+    acm.append(np.round(a[6] + np.cross(o_fixed[6], np.cross(o_fixed[6], 0.5*P_fixed[6])).reshape(3, 1) + np.cross(e_fixed[6], 0.5*P_fixed[6]).reshape(3, 1), 3))        #a67
+    return acm
+
+def fictitious_forces(lengths, angles, omega, epsilon, sav2):
+    """This functions calcules verticies of fictitious forces"""
+    acm = accelerations_centre_mass(angles, lengths, omega, epsilon, sav2)
+    if __name__ == '__main__':
+        l = [0.3, 0.2, 0.15, 0.15]
+        sav = [0.05, 0.02, 0.02]
+    else:
+        l = []
+        for length in lengths:
+            l.append(float(length.get_value()))
+        sav = []
+        for i in sav2:
+            sav.append(float(i.get_value()))
+    F = []
+    F.append(np.round(l[0]*acm[0], 3))
+    F.append(np.round(l[1]*acm[1], 3))
+    F.append(np.round((l[2]-sav[0])*acm[2], 3))
+    F.append(np.round(sav[0]*acm[3], 3))
+    F.append(np.round(l[3]*acm[4], 3))
+    return F
+
+def torques(lengths, angles, omega, epsilon, sav2):
+    R = rotations(angles)
+    o = omega_matrix(R, omega)
+    e = epsilon_matrix(R, o, epsilon, omega)
+    toi = tensors_of_inertia(lengths, sav2)
+    toi_o_fixed = []
+    o_fixed = []
+    for j in range(0, 5):
+        if j == 0:
+            toi_o_fixed.append((toi[j]*o[j+1]).reshape(1, 3))
+        elif j == 4:
+            toi_o_fixed.append((toi[j]*o[j+3]).reshape(1, 3))
+        else:
+            toi_o_fixed.append((toi[j]*o[j+2]).reshape(1, 3))
+    for matrix in o:
+        o_fixed.append(matrix.reshape(1, 3))
+    N = []
+    N.append(toi[0]*e[1] + np.cross(o_fixed[1], toi_o_fixed[0]).reshape(3, 1)) # N01
+    N.append(toi[1]*e[3] + np.cross(o_fixed[3], toi_o_fixed[1]).reshape(3, 1)) # N23
+    N.append(toi[2]*e[4] + np.cross(o_fixed[4], toi_o_fixed[2]).reshape(3, 1)) # N34
+    N.append(toi[3]*e[5] + np.cross(o_fixed[5], toi_o_fixed[3]).reshape(3, 1)) # N45
+    N.append(toi[4]*e[7] + np.cross(o_fixed[7], toi_o_fixed[4]).reshape(3, 1)) # N67
+    return N
+
 if __name__ == '__main__':
-    print(accelerations(angles, lengths, omega, epsilon))
-    print('============= V: ============')
-    print(velocities(angles, lengths, omega))
+    # np.set_printoptions(suppress = 'false')
+    print(np.round(fictitious_forces(lengths, angles, omega, epsilon, sav2), 7))
