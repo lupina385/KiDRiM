@@ -411,20 +411,70 @@ def driving_forces(lengths, angles, omegas, epsilons, sav2): #df
         df.append(float(forces.transpose()*Z))
     return df
 
-# def moments_of_impact(lengths, angles, omegas, epsilons, sav2): #n
-#     """ """
-#
-# def driving_moments(lengths, angles, omegas, epsilons, sav2): #dm
-#     """This functions calculates values of driving moments"""
-#     n = moments_of_impact(lengths, angles, omegas, epsilons, sav2)
-#     Z = np.matrix([ [0.0],
-#                     [0.0],
-#                     [1.0] ])
-#     dm = []
-#     for moments in n:
-#         dm.append(float(moments.transpose()*Z))
-#     return dm
+def moments_of_impact(lengths, angles, omegas, epsilons, sav2): #n
+    """This functions calculates vectors of moments of impact"""
+    R = rotations(angles)
+    N = torques(lengths, angles, omegas, epsilons, sav2)
+    P = shifts(lengths, sav2)
+    F = fictitious_forces(lengths, angles, omegas, epsilons, sav2)
+    f = forces_of_interactions(lengths, angles, omegas, epsilons, sav2)
+    for i in range(0, 7):
+        R[i] = R[i].transpose()
+    #Making F list have 7 elements:
+    F_help = F[4]
+    F[4] = F[3]
+    F[3] = F[2]
+    F[2] = F[1]
+    F[1] = np.matrix([ [0],
+                       [0],
+                       [0] ])
+    F.append(np.matrix([ [0],
+                         [0],
+                         [0] ]))
+    F.append(F_help)
+    #Making N list have 7 elements:
+    N_help = N[4]
+    N[4] = N[3]
+    N[3] = N[2]
+    N[2] = N[1]
+    N[1] = np.matrix([ [0],
+                       [0],
+                       [0] ])
+    N.append(np.matrix([ [0],
+                         [0],
+                         [0] ]))
+    N.append(N_help)
+    P_fixed = []
+    for shift in P:
+        P_fixed.append(shift.reshape(1, 3))
+    R_f_fixed = []
+    for i, j in zip(range(0, 7), range(1, 8)):
+        R_f_fixed.append((R[i]*f[j]).reshape(1, 3))
+    F_fixed = []
+    for force in F:
+        F_fixed.append(force.reshape(1, 3))
+    n = []
+    n.append(np.matrix([ [0],
+                         [0],
+                         [0] ]))
+    for i, j in zip(reversed(range(0, 7)), range(0, 7)):
+        if j == 2:
+            n.append(R[i]*N[i] + R[i]*n[j] + np.cross(0.5*P_fixed[i], (R[i]*F[i]).reshape(1, 3)).reshape(3, 1) + np.cross(P_fixed[i], R_f_fixed[i]).reshape(3, 1))
+        else:
+            n.append(N[i] + R[i]*n[j] + np.cross(0.5*P_fixed[i], F_fixed[i]).reshape(3, 1) + np.cross(P_fixed[i], R_f_fixed[i]).reshape(3, 1))
+    return n[::-1]
+
+def driving_moments(lengths, angles, omegas, epsilons, sav2): #dm
+    """This functions calculates values of driving moments"""
+    n = moments_of_impact(lengths, angles, omegas, epsilons, sav2)
+    Z = np.matrix([ [0.0],
+                    [0.0],
+                    [1.0] ])
+    dm = []
+    for moments in n:
+        dm.append(float(moments.transpose()*Z))
+    return dm
 
 
 if __name__ == '__main__':
-    print(driving_forces(lengths, angles, omegas, epsilons, sav2))
+    print(driving_moments(lengths, angles, omegas, epsilons, sav2))

@@ -47,16 +47,22 @@ def calculate(angle, length, omega, epsilon, sav2, label):
         label[3].config(text=result)
 
     F = calc.fictitious_forces(length, angle, omega, epsilon, sav2)
-    N = calc.torques(length, angle, omega, epsilon, sav2)
-    if N == 'error' or F == 'error':
+    if F == 'error':
         tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości, prędkości kątowej lub przyspieszenia kątowego!')
     else:
-        result = 'Siły bezwł. i momenty sił:'
+        result = 'Siły bezwł.:'
         for i in range(0, 5):
             result += '\n===F' + str(i) + '===\n{}'.format(np.round(F[i], 3))
+        label[4].config(text=result)
+
+    N = calc.torques(length, angle, omega, epsilon, sav2)
+    if N == 'error':
+        tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości, prędkości kątowej lub przyspieszenia kątowego!')
+    else:
+        result = 'Momenty sił:'
         for i in range(0, 5):
             result += '\n===N' + str(i) + '===\n{}'.format(np.round(N[i], 8))
-        label[4].config(text=result)
+        label[5].config(text=result)
 
     f = calc.forces_of_interactions(length, angle, omega, epsilon, sav2)
     if f == 'error':
@@ -65,10 +71,22 @@ def calculate(angle, length, omega, epsilon, sav2, label):
         result = 'Siły oddziaływań członów:'
         for i in range(0, 7):
             result += '\n===f' + str(i+1) + '===\n{}'.format(np.round(f[i], 3))
-        label[5].config(text=result)
+        label[6].config(text=result)
+
+    n = calc.moments_of_impact(length, angle, omega, epsilon, sav2)
+    result = 'Momenty oddziaływań członów:'
+    for i in range(0, 7):
+        result += '\n===n' + str(i+1) + '===\n{}'.format(np.round(n[i], 3))
+    label[7].config(text=result)
 
     df = calc.driving_forces(length, angle, omega, epsilon, sav2)
     result = 'Siły napędowe:'
     for i in range(0, 7):
         result += '\nSN' + str(i+1) + '= {}'.format(round(df[i], 3))
-    label[6].config(text=result)
+    label[8].config(text=result)
+
+    dm = calc.driving_moments(length, angle, omega, epsilon, sav2)
+    result = 'Momenty napędowe:'
+    for i in range(0, 7):
+        result += '\nMo' + str(i+1) + '= {}'.format(np.round(dm[i], 3))
+    label[9].config(text=result)
