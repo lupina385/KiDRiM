@@ -57,3 +57,18 @@ def calculate(angle, length, omega, epsilon, sav2, label):
         for i in range(0, 5):
             result += '\n===N' + str(i) + '===\n{}'.format(np.round(N[i], 8))
         label[4].config(text=result)
+
+    f = calc.forces_of_interactions(length, angle, omega, epsilon, sav2)
+    if f == 'error':
+        tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości, prędkości kątowej lub przyspieszenia kątowego!')
+    else:
+        result = 'Siły oddziaływań członów:'
+        for i in range(0, 7):
+            result += '\n===f' + str(i+1) + '===\n{}'.format(np.round(f[i], 3))
+        label[5].config(text=result)
+
+    df = calc.driving_forces(length, angle, omega, epsilon, sav2)
+    result = 'Siły napędowe:'
+    for i in range(0, 7):
+        result += '\nSN' + str(i+1) + '= {}'.format(round(df[i], 3))
+    label[6].config(text=result)

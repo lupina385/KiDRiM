@@ -51,7 +51,7 @@ sav2.append(el_block(top, 'V2:', 15))
 sav2.append(el_block(top, 'a2:', 16))
 
 label_result = []
-for i in range(0, 5):
+for i in range(0, 7):
     label_result.append(tk.Label(top, text='', font = 'Arial', justify='left'))
     label_result[i].grid(column=i+3, row=0, rowspan=999, sticky='nw')
 
