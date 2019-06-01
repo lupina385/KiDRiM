@@ -1,14 +1,11 @@
 import numpy as np
 import math as m
 
-if __name__ == '__main__':
-    angles, lengths, omegas, epsilons, sav2 = 0, 0, 0, 0, 0
-
-def shifts(lengths, sav2):
+def shifts(lengths, sav2): #P
     try:
         if __name__ == '__main__':
-            l = [0.3, 0.2, 0.15, 0.15]
-            sav = [0.05, 0.02, 0.02]
+            l = lengths
+            sav = sav2
         else:
             l = []
             for length in lengths:
@@ -41,18 +38,17 @@ def shifts(lengths, sav2):
         return P
 
     except ValueError:
-        return 'error' #P
+        return 'error'
 
-def rotations(angles):
+def rotations(angles): #R
     """This function returns a rotations matricies from Denavit-Hattenberg notation based on given angles"""
     try:
         if __name__ == '__main__':
-            a = [30.0, 30.0, -30.0]
+            a = angles
         else:
             a=[]
             for angle in angles:
                 a.append(float(angle.get_value()))
-
         if a[0]<-60 or a[0]>60 or a[1]<-30 or a[1]>45 or a[2]<-45 or a[2]>30:
             return 'error'
         alfa, teta = [], []
@@ -86,19 +82,20 @@ def rotations(angles):
         return R
 
     except ValueError:
-        return 'error' #R
+        return 'error'
 
-def omega_matrix(R, omegas):
+def omega_matrix(R, omegas): #o
     """This function returns a list of matricies of angle velocities"""
     try:
         if __name__ == '__main__':
-            o = [0.0, 2.0, 3.0, 1.0]
+            o = []
+            for om in omegas:
+                o.append(om)
         else:
             o=[]
-            o.append(0)
             for om in omegas:
                 o.append(float(om.get_value()))
-        o[2] = -o[2]
+        o[1] = -o[1]
         Z = np.matrix([[0],
                        [0],
                        [1] ])
@@ -107,23 +104,27 @@ def omega_matrix(R, omegas):
                                  [0],
                                  [0] ]))       #omega0
         omega.append((R[0]*omega[0]))           #omega1
-        omega.append((R[1]*omega[1]) + (o[1]*Z))#omega2
-        omega.append((R[2]*omega[2]) + (o[2]*Z))#omega3
+        omega.append((R[1]*omega[1]) + (o[0]*Z))#omega2
+        omega.append((R[2]*omega[2]) + (o[1]*Z))#omega3
         omega.append((R[3]*omega[3]))           #omega4
         omega.append((R[4]*omega[4]))           #omega5
-        omega.append((R[5]*omega[5]) + (o[3]*Z))#omega6
+        omega.append((R[5]*omega[5]) + (o[2]*Z))#omega6
         omega.append((R[6]*omega[6]))           #omega7
 
         return omega
 
     except ValueError:
-        return 'error' #o
+        return 'error'
 
-def epsilon_matrix(R, o_m, epsilons, o_v):
+def epsilon_matrix(R, o_m, epsilons, o_v): #e
     try:
         if __name__ == '__main__':
-            e = [1.0, 1.5, 2.5]
-            o_values = [0.0, 2.0, 3.0, 1.0]
+            e = []
+            o_values = []
+            for eps in epsilons:
+                e.append(eps)
+            for o in omegas:
+                o_values.append(o)
         else:
             e = []
             o_values = []
@@ -153,17 +154,15 @@ def epsilon_matrix(R, o_m, epsilons, o_v):
         epsilon.append(R[4]*epsilon[4])
         epsilon.append((R[5]*epsilon[5]) + (np.cross(R_om_fixed[5], ov_Z_fixed[2]).reshape(3, 1) + Z*e[2]))
         epsilon.append(R[6]*epsilon[6])
-
         return epsilon
-
     except ValueError:
-        return 'error' #e
+        return 'error'
 
-def tensors_of_inertia(lengths, sav2):
+def tensors_of_inertia(lengths, sav2): #toi
     try:
         if __name__ == '__main__':
-            l = [0.3, 0.2, 0.15, 0.15]
-            sav = [0.05, 0.02, 0.02]
+            l = lengths
+            sav = sav2
         else:
             l = []
             for length in lengths:
@@ -190,7 +189,7 @@ def tensors_of_inertia(lengths, sav2):
 
         return I
     except ValueError:
-        return 'error' #toi
+        return 'error'
 
 #Functions above are only for functions below to be able to calculate certain values
 #They are not for displaying any informations for user
@@ -200,8 +199,8 @@ def positions(angles, lengths):
     """This function calculates positions of each points of a robot, based on given angles and lengths"""
     try:
         if __name__ == '__main__':
-            a = [30.0, 30.0, -30.0]
-            l = [0.3, 0.2, 0.15, 0.15]
+            a = angles
+            l = lengths
         else:
             a = []
             for angle in angles:
@@ -227,13 +226,13 @@ def positions(angles, lengths):
 def velocities(angles, lengths, omegas, sav2): #v
     """This functions calculates vectors of velocities of the points of the robot"""
     if __name__ == '__main__':
-        a = [30.0, 30.0, -30.0]
-        o = [0.0, 2.0, -3.0, 1.0]
-        l = [0.3, 0.2, 0.15, 0.15]
+        a = angles
+        o = omegas
+        l = lengths
         R = rotations(a)
         o = omega_matrix(R, o)
         P = shifts(l)
-        v2=0.02
+        v2 = sav2[1]
     else:
         R = rotations(angles)
         o = omega_matrix(R, omegas)
@@ -264,19 +263,19 @@ def velocities(angles, lengths, omegas, sav2): #v
 
 def accelerations(angles, lengths, omegas, epsilons, sav2): #a
     """This functions calculates vectors of accelerations of the points of the robot"""
+    if __name__=='__main__':
+        v2 = sav2[1]
+        a2 = sav2[2]
+    else:
+        try:
+            v2 = float(sav2[1].get_value())
+            a2 = float(sav2[2].get_value())
+        except ValueError:
+            return 'error'
     R = rotations(angles)
     o = omega_matrix(R, omegas)
     e = epsilon_matrix(R, o, epsilons, omegas)
     P = shifts(lengths, sav2)
-    if __name__=='__main__':
-        v2=0.02
-        a2=0.02
-    else:
-        try:
-            v2 = float(sav2[1].get_value())
-            a2 = float(sav2[0].get_value())
-        except ValueError:
-            return 'error'
     a = []
     a.append(np.matrix([ [0.0],
                          [0.0],
@@ -320,19 +319,19 @@ def accelerations_centre_mass(angles, lengths, omegas, epsilons, sav2): #acm
     for epsilon in e:
         e_fixed.append(epsilon.reshape(1, 3))
     acm = []
-    acm.append(np.round(a[0] + np.cross(o_fixed[0], np.cross(o_fixed[0], 0.5*P_fixed[0])).reshape(3, 1) + np.cross(e_fixed[0], 0.5*P_fixed[0]).reshape(3, 1), 3))        #a01
-    acm.append(np.round(a[2] + np.cross(o_fixed[2], np.cross(o_fixed[2], 0.5*P_fixed[2])).reshape(3, 1) + np.cross(e_fixed[2], 0.5*P_fixed[2]).reshape(3, 1), 3))        #a23
-    acm.append(np.round(a[3] + np.cross(o_fixed[3], np.cross(o_fixed[3], 0.5*P_fixed[3])).reshape(3, 1) + np.cross(e_fixed[3], 0.5*P_fixed[3]).reshape(3, 1), 3))        #a34
-    acm.append(np.round((R[4]*(a[4] + np.cross(o_fixed[4], np.cross(o_fixed[4], 0.5*P_fixed[4])).reshape(3, 1) + np.cross(e_fixed[4], 0.5*P_fixed[4]).reshape(3, 1))), 3)) #a45
-    acm.append(np.round(a[6] + np.cross(o_fixed[6], np.cross(o_fixed[6], 0.5*P_fixed[6])).reshape(3, 1) + np.cross(e_fixed[6], 0.5*P_fixed[6]).reshape(3, 1), 3))        #a67
+    acm.append(np.round(R[0]*(a[0] + np.cross(o_fixed[0], np.cross(o_fixed[0], 0.5*P_fixed[0])).reshape(3, 1) + np.cross(e_fixed[0], 0.5*P_fixed[0]).reshape(3, 1)), 3))        #a01
+    acm.append(np.round(R[2]*(a[2] + np.cross(o_fixed[2], np.cross(o_fixed[2], 0.5*P_fixed[2])).reshape(3, 1) + np.cross(e_fixed[2], 0.5*P_fixed[2]).reshape(3, 1)), 3))        #a23
+    acm.append(np.round(R[3]*(a[3] + np.cross(o_fixed[3], np.cross(o_fixed[3], 0.5*P_fixed[3])).reshape(3, 1) + np.cross(e_fixed[3], 0.5*P_fixed[3]).reshape(3, 1)), 3))        #a34
+    acm.append(np.round((a[4] + np.cross(o_fixed[4], np.cross(o_fixed[4], 0.5*P_fixed[4])).reshape(3, 1) + np.cross(e_fixed[4], 0.5*P_fixed[4]).reshape(3, 1)), 3))             #a45
+    acm.append(np.round(R[6]*(a[6] + np.cross(o_fixed[6], np.cross(o_fixed[6], 0.5*P_fixed[6])).reshape(3, 1) + np.cross(e_fixed[6], 0.5*P_fixed[6]).reshape(3, 1)), 3))        #a67
     return acm
 
 def fictitious_forces(lengths, angles, omegas, epsilons, sav2): #F
     """This functions calculates verticies of fictitious forces"""
     acm = accelerations_centre_mass(angles, lengths, omegas, epsilons, sav2)
     if __name__ == '__main__':
-        l = [0.3, 0.2, 0.15, 0.15]
-        sav = [0.05, 0.02, 0.02]
+        l = lengths
+        sav = sav2
     else:
         l = []
         for length in lengths:
@@ -475,6 +474,9 @@ def driving_moments(lengths, angles, omegas, epsilons, sav2): #dm
         dm.append(float(moments.transpose()*Z))
     return dm
 
-
 if __name__ == '__main__':
-    print(driving_moments(lengths, angles, omegas, epsilons, sav2))
+    angles = [42.0, 33.0, -33.0]
+    lengths = [0.3, 0.2, 0.15, 0.15]
+    omegas = [2.0, 3.0, 1.0]
+    epsilons = [1.0, 1.5, 2.5]
+    sav2 = [0.05, 0.02, 0.02]
