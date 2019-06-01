@@ -319,11 +319,11 @@ def accelerations_centre_mass(angles, lengths, omegas, epsilons, sav2): #acm
     for epsilon in e:
         e_fixed.append(epsilon.reshape(1, 3))
     acm = []
-    acm.append(np.round(R[0]*(a[0] + np.cross(o_fixed[0], np.cross(o_fixed[0], 0.5*P_fixed[0])).reshape(3, 1) + np.cross(e_fixed[0], 0.5*P_fixed[0]).reshape(3, 1)), 3))        #a01
-    acm.append(np.round(R[2]*(a[2] + np.cross(o_fixed[2], np.cross(o_fixed[2], 0.5*P_fixed[2])).reshape(3, 1) + np.cross(e_fixed[2], 0.5*P_fixed[2]).reshape(3, 1)), 3))        #a23
-    acm.append(np.round(R[3]*(a[3] + np.cross(o_fixed[3], np.cross(o_fixed[3], 0.5*P_fixed[3])).reshape(3, 1) + np.cross(e_fixed[3], 0.5*P_fixed[3]).reshape(3, 1)), 3))        #a34
-    acm.append(np.round((a[4] + np.cross(o_fixed[4], np.cross(o_fixed[4], 0.5*P_fixed[4])).reshape(3, 1) + np.cross(e_fixed[4], 0.5*P_fixed[4]).reshape(3, 1)), 3))             #a45
-    acm.append(np.round(R[6]*(a[6] + np.cross(o_fixed[6], np.cross(o_fixed[6], 0.5*P_fixed[6])).reshape(3, 1) + np.cross(e_fixed[6], 0.5*P_fixed[6]).reshape(3, 1)), 3))        #a67
+    acm.append(np.round((a[0] + np.cross(o_fixed[0], np.cross(o_fixed[0], 0.5*P_fixed[0])).reshape(3, 1) + np.cross(e_fixed[0], 0.5*P_fixed[0]).reshape(3, 1)), 3))        #a01
+    acm.append(np.round((a[2] + np.cross(o_fixed[2], np.cross(o_fixed[2], 0.5*P_fixed[2])).reshape(3, 1) + np.cross(e_fixed[2], 0.5*P_fixed[2]).reshape(3, 1)), 3))        #a23
+    acm.append(np.round((a[3] + np.cross(o_fixed[3], np.cross(o_fixed[3], 0.5*P_fixed[3])).reshape(3, 1) + np.cross(e_fixed[3], 0.5*P_fixed[3]).reshape(3, 1)), 3))        #a34
+    acm.append(np.round(R[4]*(a[4] + np.cross(o_fixed[4], np.cross(o_fixed[4], 0.5*P_fixed[4])).reshape(3, 1) + np.cross(e_fixed[4], 0.5*P_fixed[4]).reshape(3, 1)), 3))             #a45
+    acm.append(np.round((a[6] + np.cross(o_fixed[6], np.cross(o_fixed[6], 0.5*P_fixed[6])).reshape(3, 1) + np.cross(e_fixed[6], 0.5*P_fixed[6]).reshape(3, 1)), 3))        #a67
     return acm
 
 def fictitious_forces(lengths, angles, omegas, epsilons, sav2): #F
