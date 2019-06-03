@@ -231,7 +231,7 @@ def velocities(angles, lengths, omegas, sav2): #v
         l = lengths
         R = rotations(a)
         o = omega_matrix(R, o)
-        P = shifts(l)
+        P = shifts(l, sav2)
         v2 = sav2[1]
     else:
         R = rotations(angles)
@@ -475,8 +475,16 @@ def driving_moments(lengths, angles, omegas, epsilons, sav2): #dm
     return dm
 
 if __name__ == '__main__':
-    angles = [42.0, 33.0, -33.0]
+    angles = [60.0, 45.0, -45.0]
     lengths = [0.3, 0.2, 0.15, 0.15]
     omegas = [2.0, 3.0, 1.0]
     epsilons = [1.0, 1.5, 2.5]
     sav2 = [0.05, 0.02, 0.02]
+
+    a = accelerations(angles, lengths, omegas, epsilons, sav2)
+    for i, acc in enumerate(a, 0):
+        print(i, acc)
+
+    # acm = accelerations_centre_mass(angles, lengths, omegas, epsilons, sav2)
+    # for i, acc in enumerate(acm, 0):
+    #     print(i, acc)

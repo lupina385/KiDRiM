@@ -87,4 +87,4 @@ def calculate(angle, length, omega, epsilon, sav2, result_listbox):
     dm = calc.driving_moments(length, angle, omega, epsilon, sav2)
     result_listbox.insert('end', 'Momenty napędowe:')
     for i in range(0, 7):
-        gitresult_listbox.insert('end', 'Mo' + str(i+1) + '= {}'.format(np.round(dm[i], 3)))
+        result_listbox.insert('end', 'Mo' + str(i+1) + '= {}'.format(np.round(dm[i], 3)))
