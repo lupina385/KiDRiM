@@ -474,17 +474,26 @@ def driving_moments(lengths, angles, omegas, epsilons, sav2): #dm
         dm.append(float(moments.transpose()*Z))
     return dm
 
+def value_of_vectors(vector):
+    if type(vector) is not list:
+        return round(m.sqrt(pow(vector.item(0), 2) + pow(vector.item(1), 2) + pow(vector.item(2), 2)), 3)
+    else:
+        values = []
+        for vec in vector:
+            values.append(round(m.sqrt(pow(vec.item(0), 2) + pow(vec.item(1), 2) + pow(vec.item(2), 2)), 3))
+        return values
+
+
 if __name__ == '__main__':
-    angles = [60.0, 45.0, -45.0]
+    angles = [30.0, 30.0, -30.0]
     lengths = [0.3, 0.2, 0.15, 0.15]
     omegas = [2.0, 3.0, 1.0]
     epsilons = [1.0, 1.5, 2.5]
     sav2 = [0.05, 0.02, 0.02]
 
     a = accelerations(angles, lengths, omegas, epsilons, sav2)
-    for i, acc in enumerate(a, 0):
-        print(i, acc)
-
-    # acm = accelerations_centre_mass(angles, lengths, omegas, epsilons, sav2)
-    # for i, acc in enumerate(acm, 0):
-    #     print(i, acc)
+    v = velocities(angles, lengths, omegas, sav2)
+    b=[]
+    b.append(v[1])
+    print(v[1])
+    print(value_of_vectors(v))

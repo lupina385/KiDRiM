@@ -2,11 +2,12 @@ import tkinter as tk
 from tkinter import messagebox as tkmb
 import on_click as oc
 from PIL import ImageTk, Image
+from tkinter import font
 
 class el_block:
     def __init__(self, window, name, i):
         self.label = tk.Label(window, text=name, font='Arial')
-        self.label.grid(row=i)
+        self.label.grid(row=i, sticky='e')
         self.entry = tk.Entry(window, width=10)
         self.entry.grid(column=1, row=i)
 
@@ -53,7 +54,9 @@ sav2.append(el_block(top, 'a2:', 16))
 result_frame = tk.Frame(top)
 result_frame.grid(row=17, sticky='nesw', columnspan=3)
 
-result_listbox = tk.Listbox(result_frame, font=20, width=65)
+result_font = font.Font(size=16)
+font.families()
+result_listbox = tk.Listbox(result_frame, font=result_font, width=50)
 result_listbox.grid(sticky='nesw')
 scrollbar = tk.Scrollbar(result_frame)
 scrollbar.grid(column=1, row=0, sticky='ns')

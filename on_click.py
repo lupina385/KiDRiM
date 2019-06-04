@@ -5,6 +5,7 @@ import numpy as np
 
 def calculate(angle, length, omega, epsilon, sav2, result_listbox):
     """It displays all outcomes needed in given labels"""
+    result_listbox.delete(0, 'end')
     np.set_printoptions(floatmode = 'maxprec_equal')
     cords = calc.positions(angle, length)
     if  cords == 'error':
@@ -17,9 +18,6 @@ def calculate(angle, length, omega, epsilon, sav2, result_listbox):
         result_listbox.insert('end', 'C( {} ; {} )'.format(cords['C'][0], cords['C'][1]))
         result_listbox.insert('end', 'D( {} ; {} )'.format(cords['D'][0], cords['D'][1]))
 
-        #label[0].config(text=result)
-
-
     v = calc.velocities(angle, length, omega, sav2)
     if v == 'error':
         tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości bądź prędkości kątowej!')
@@ -27,7 +25,10 @@ def calculate(angle, length, omega, epsilon, sav2, result_listbox):
     else:
         result_listbox.insert('end','Prędkości:')
         for i in range(1, 8):
-            result_listbox.insert('end', 'V' + str(i) + ': {}'.format(v[i]))
+            if i==2 or i==3 or i==4 or i==6 or i==7:
+                result_listbox.insert('end', 'V' + str(i) + ': {} => V'.format(v[i]) + str(i) + ' = {}'.format(calc.value_of_vectors(v[i])))
+            else:
+                result_listbox.insert('end', 'V' + str(i) + ': {} '.format(v[i]))
 
     a = calc.accelerations(angle, length, omega, epsilon, sav2)
     if a == 'error':
@@ -36,7 +37,10 @@ def calculate(angle, length, omega, epsilon, sav2, result_listbox):
     else:
         result_listbox.insert('end','Przyspieszenia:')
         for i in range(1, 8):
-            result_listbox.insert('end','a' + str(i) + ': {}'.format(a[i]))
+            if i==2 or i==3 or i==4 or i==6 or i==7:
+                result_listbox.insert('end', 'a' + str(i) + ': {} => a'.format(a[i]) + str(i) + ' = {}'.format(calc.value_of_vectors(a[i])))
+            else:
+                result_listbox.insert('end', 'a' + str(i) + ': {} '.format(a[i]))
 
     acm = calc.accelerations_centre_mass(angle, length, omega, epsilon, sav2)
     if acm == 'error':
