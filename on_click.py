@@ -25,10 +25,15 @@ def calculate(angle, length, omega, epsilon, sav2, result_listbox):
     else:
         result_listbox.insert('end','Prędkości:')
         for i in range(1, 8):
-            if i==2 or i==3 or i==4 or i==6 or i==7:
-                result_listbox.insert('end', 'V' + str(i) + ': {} => V'.format(v[i]) + str(i) + ' = {}'.format(calc.value_of_vectors(v[i])))
-            else:
-                result_listbox.insert('end', 'V' + str(i) + ': {} '.format(v[i]))
+            if i==2:
+                result_listbox.insert('end', 'V_A: {} => '.format(v[i]) + 'VA = {}'.format(calc.value_of_vectors(v[i])))
+            elif i==3:
+                result_listbox.insert('end', 'V_B: {} => '.format(v[i]) + 'VB = {}'.format(calc.value_of_vectors(v[i])))
+            elif i==6:
+                result_listbox.insert('end', 'V_C: {} => '.format(v[i]) + 'VC = {}'.format(calc.value_of_vectors(v[i])))
+            elif i==7:
+                result_listbox.insert('end', 'V_D: {} => '.format(v[i]) + 'VD = {}'.format(calc.value_of_vectors(v[i])))
+
 
     a = calc.accelerations(angle, length, omega, epsilon, sav2)
     if a == 'error':
@@ -37,58 +42,81 @@ def calculate(angle, length, omega, epsilon, sav2, result_listbox):
     else:
         result_listbox.insert('end','Przyspieszenia:')
         for i in range(1, 8):
-            if i==2 or i==3 or i==4 or i==6 or i==7:
-                result_listbox.insert('end', 'a' + str(i) + ': {} => a'.format(a[i]) + str(i) + ' = {}'.format(calc.value_of_vectors(a[i])))
-            else:
-                result_listbox.insert('end', 'a' + str(i) + ': {} '.format(a[i]))
+            if i==2:
+                result_listbox.insert('end', 'a_A: {} => aA'.format(a[i]) + ' = {}'.format(calc.value_of_vectors(a[i])))
+            elif i==3:
+                result_listbox.insert('end', 'a_B: {} => aB'.format(a[i]) + ' = {}'.format(calc.value_of_vectors(a[i])))
+            elif i==6:
+                result_listbox.insert('end', 'a_C: {} => aC'.format(a[i]) + ' = {}'.format(calc.value_of_vectors(a[i])))
+            elif i==7:
+                result_listbox.insert('end', 'a_D: {} => aD'.format(a[i]) + ' = {}'.format(calc.value_of_vectors(a[i])))
+
 
     acm = calc.accelerations_centre_mass(angle, length, omega, epsilon, sav2)
     if acm == 'error':
         tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości, prędkości kątowej lub przyspieszenia kątowego!')
     else:
         result_listbox.insert('end','Przyspieszenia środków ciężkości:')
-        result_listbox.insert('end','a01: {}'.format(acm[0]))
-        result_listbox.insert('end','a23: {}'.format(acm[1]))
-        result_listbox.insert('end','a34: {}'.format(acm[2]))
-        result_listbox.insert('end','a45: {}'.format(acm[3]))
-        result_listbox.insert('end','a67: {}'.format(acm[4]))
+        result_listbox.insert('end','a_OA: {}'.format(acm[0]))
+        result_listbox.insert('end','a_AB: {}'.format(acm[1]))
+        result_listbox.insert('end','a_BS: {}'.format(acm[2]))
+        result_listbox.insert('end','a_SC: {}'.format(acm[3]))
+        result_listbox.insert('end','a_CD: {}'.format(acm[4]))
 
     F = calc.fictitious_forces(length, angle, omega, epsilon, sav2)
     if F == 'error':
         tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości, prędkości kątowej lub przyspieszenia kątowego!')
     else:
         result_listbox.insert('end','Siły bezwładności:')
-        for i in range(0, 5):
-            result_listbox.insert('end', 'F' + str(i) + ': {}'.format(np.round(F[i], 3)))
+        result_listbox.insert('end', 'F_OA: {}'.format(np.round(F[0], 3)))
+        result_listbox.insert('end', 'F_AB: {}'.format(np.round(F[1], 3)))
+        result_listbox.insert('end', 'F_BS: {}'.format(np.round(F[2], 3)))
+        result_listbox.insert('end', 'F_SC: {}'.format(np.round(F[3], 3)))
+        result_listbox.insert('end', 'F_CD: {}'.format(np.round(F[4], 3)))
 
     N = calc.torques(length, angle, omega, epsilon, sav2)
     if N == 'error':
         tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości, prędkości kątowej lub przyspieszenia kątowego!')
     else:
         result_listbox.insert('end','Momenty sił bezwładności:')
-        for i in range(0, 5):
-            result_listbox.insert('end', 'N' + str(i) + ': {}'.format(np.round(N[i], 8)))
+        result_listbox.insert('end', 'N_OA: {}'.format(np.round(N[0], 8)))
+        result_listbox.insert('end', 'N_AB: {}'.format(np.round(N[1], 8)))
+        result_listbox.insert('end', 'N_BS: {}'.format(np.round(N[2], 8)))
+        result_listbox.insert('end', 'N_SC: {}'.format(np.round(N[3], 8)))
+        result_listbox.insert('end', 'N_CD: {}'.format(np.round(N[4], 8)))
 
     f = calc.forces_of_interactions(length, angle, omega, epsilon, sav2)
     if f == 'error':
         tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości, prędkości kątowej lub przyspieszenia kątowego!')
     else:
         result_listbox.insert('end', 'Siły oddziaływań członów:')
-        for i in range(0, 7):
-            result_listbox.insert('end', 'f' + str(i+1) + ': {}'.format(np.round(f[i], 3)))
+        result_listbox.insert('end', 'f_OA: {}'.format(np.round(f[0], 3)))
+        result_listbox.insert('end', 'f_AB: {}'.format(np.round(f[2], 3)))
+        result_listbox.insert('end', 'f_BS: {}'.format(np.round(f[3], 3)))
+        result_listbox.insert('end', 'f_SC: {}'.format(np.round(f[5], 3)))
+        result_listbox.insert('end', 'f_CD: {}'.format(np.round(f[6], 3)))
 
 
     n = calc.moments_of_impact(length, angle, omega, epsilon, sav2)
     result_listbox.insert('end', 'Momenty oddziaływań członów:')
-    for i in range(0, 7):
-        result_listbox.insert('end', 'n' + str(i+1) + ': {}'.format(np.round(n[i], 3)))
+    result_listbox.insert('end', 'n_OA: {}'.format(np.round(n[0], 3)))
+    result_listbox.insert('end', 'n_AB: {}'.format(np.round(n[1], 3)))
+    result_listbox.insert('end', 'n_BS: {}'.format(np.round(n[2], 3)))
+    result_listbox.insert('end', 'n_SC: {}'.format(np.round(n[3], 3)))
+    result_listbox.insert('end', 'n_CD: {}'.format(np.round(n[4], 3)))
 
     df = calc.driving_forces(length, angle, omega, epsilon, sav2)
     result_listbox.insert('end', 'Siły napędowe:')
-    for i in range(0, 7):
-        result_listbox.insert('end', 'SN' + str(i+1) + '= {}'.format(round(df[i], 3)))
+    result_listbox.insert('end', 'Sn_OA= {}'.format(round(df[0], 3)))
+    result_listbox.insert('end', 'Sn_AB= {}'.format(round(df[1], 3)))
+    result_listbox.insert('end', 'Sn_BS= {}'.format(round(df[2], 3)))
+    result_listbox.insert('end', 'Sn_SC= {}'.format(round(df[3], 3)))
+    result_listbox.insert('end', 'Sn_CD= {}'.format(round(df[4], 3)))
 
     dm = calc.driving_moments(length, angle, omega, epsilon, sav2)
     result_listbox.insert('end', 'Momenty napędowe:')
-    for i in range(0, 7):
-        result_listbox.insert('end', 'Mo' + str(i+1) + '= {}'.format(np.round(dm[i], 3)))
+    result_listbox.insert('end', 'Mn_= {}'.format(np.round(dm[0], 3)))
+    result_listbox.insert('end', 'Mn_= {}'.format(np.round(dm[1], 3)))
+    result_listbox.insert('end', 'Mn_= {}'.format(np.round(dm[2], 3)))
+    result_listbox.insert('end', 'Mn_= {}'.format(np.round(dm[3], 3)))
+    result_listbox.insert('end', 'Mn_= {}'.format(np.round(dm[4], 3)))
