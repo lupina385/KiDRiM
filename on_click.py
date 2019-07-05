@@ -67,7 +67,7 @@ def calculate(angle, length, omega, epsilon, sav2, result_listbox):
     if F == 'error':
         tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości, prędkości kątowej lub przyspieszenia kątowego!')
     else:
-        result_listbox.insert('end','Siły bezwładności:')
+        result_listbox.insert('end','Siły bezwładności (w środkach ciężkości):')
         result_listbox.insert('end', 'F_OA: {}'.format(np.round(F[0], 3)))
         result_listbox.insert('end', 'F_AB: {}'.format(np.round(F[1], 3)))
         result_listbox.insert('end', 'F_BS: {}'.format(np.round(F[2], 3)))
@@ -78,7 +78,7 @@ def calculate(angle, length, omega, epsilon, sav2, result_listbox):
     if N == 'error':
         tkmb.showinfo('Błąd', 'Wprowadzono nieprawidłową wartość kąta, długości, prędkości kątowej lub przyspieszenia kątowego!')
     else:
-        result_listbox.insert('end','Momenty sił bezwładności:')
+        result_listbox.insert('end','Momenty sił bezwładności (w środkach ciężkości):')
         result_listbox.insert('end', 'N_OA: {}'.format(np.round(N[0], 8)))
         result_listbox.insert('end', 'N_AB: {}'.format(np.round(N[1], 8)))
         result_listbox.insert('end', 'N_BS: {}'.format(np.round(N[2], 8)))
@@ -114,9 +114,9 @@ def calculate(angle, length, omega, epsilon, sav2, result_listbox):
     result_listbox.insert('end', 'Sn_CD= {}'.format(round(df[4], 3)))
 
     dm = calc.driving_moments(length, angle, omega, epsilon, sav2)
-    result_listbox.insert('end', 'Momenty napędowe:')
-    result_listbox.insert('end', 'Mn_= {}'.format(np.round(dm[0], 3)))
-    result_listbox.insert('end', 'Mn_= {}'.format(np.round(dm[1], 3)))
-    result_listbox.insert('end', 'Mn_= {}'.format(np.round(dm[2], 3)))
-    result_listbox.insert('end', 'Mn_= {}'.format(np.round(dm[3], 3)))
-    result_listbox.insert('end', 'Mn_= {}'.format(np.round(dm[4], 3)))
+    result_listbox.insert('end', 'Momenty napędowe (w środkach ciężkości):')
+    result_listbox.insert('end', 'Mn_OA= {}'.format(np.round(dm[0], 3)))
+    result_listbox.insert('end', 'Mn_AB= {}'.format(np.round(dm[1], 3)))
+    result_listbox.insert('end', 'Mn_BS= {}'.format(np.round(dm[2], 3)))
+    result_listbox.insert('end', 'Mn_SC= {}'.format(np.round(dm[3], 3)))
+    result_listbox.insert('end', 'Mn_CD= {}'.format(np.round(dm[4], 3)))
